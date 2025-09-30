@@ -200,3 +200,46 @@ rand_forest.fit(X_train, y_train)
 
 print("Best Random Forest Params (RandomizedSearchCV):", rand_forest.best_params_)
 print("Best Random Forest CV Accuracy:", round(rand_forest.best_score_, 3))
+
+# ================================
+# Step 5: Model Performance Analysis
+# ================================
+
+from sklearn.metrics import confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+print("\n\n================ Step 5: Model Performance Analysis ================\n")
+
+# Logistic Regression (use best estimator from GridSearchCV)
+print("\n================ Logistic Regression Results ================\n")
+best_logreg = grid_logreg.best_estimator_
+y_pred_test1 = best_logreg.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred_test1, zero_division = 0))
+cm1 = confusion_matrix(y_test, y_pred_test1)
+sns.heatmap(cm1, annot = True, fmt = "d")
+plt.title("Confusion Matrix - Logistic Regression (Best Params)")
+plt.xlabel("Predicted"); plt.ylabel("Actual")
+plt.show()
+
+# Decision Tree (use best estimator from GridSearchCV)
+print("\n================ Decision Tree Results ================\n")
+best_tree = grid_tree.best_estimator_
+y_pred_test2 = best_tree.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred_test2))
+cm2 = confusion_matrix(y_test, y_pred_test2)
+sns.heatmap(cm2, annot = True, fmt = "d")
+plt.title("Confusion Matrix - Decision Tree (Best Params)")
+plt.xlabel("Predicted"); plt.ylabel("Actual")
+plt.show()
+
+# Random Forest (use best estimator from GridSearchCV)
+print("\n================ Random Forest Results ================\n")
+best_forest = grid_forest.best_estimator_
+y_pred_test3 = best_forest.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred_test3))
+cm3 = confusion_matrix(y_test, y_pred_test3)
+sns.heatmap(cm3, annot = True, fmt = "d")
+plt.title("Confusion Matrix - Random Forest (Best Params)")
+plt.xlabel("Predicted"); plt.ylabel("Actual")
+plt.show()
