@@ -243,3 +243,35 @@ sns.heatmap(cm3, annot = True, fmt = "d")
 plt.title("Confusion Matrix - Random Forest (Best Params)")
 plt.xlabel("Predicted"); plt.ylabel("Actual")
 plt.show()
+
+# ================================
+# Step 6: Stacked Model Performance Analysis
+# ================================
+
+from sklearn.ensemble import StackingClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+print("\n================ Step 6: Stacked Model Performance Analysis ================\n")
+
+# Stack Logistic Regression and Decision Tree
+estimators = [
+    ('logreg', mdl1),
+    ('dtree', mdl2)
+]
+
+stack_model = StackingClassifier(
+    estimators=estimators,
+    final_estimator=RandomForestClassifier(random_state = 42)
+)
+stack_model.fit(X_train, y_train)
+
+# Evaluate the stacked model
+print("\n================ Stacked Model Results ================\n")
+y_pred_stack = stack_model.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred_stack, zero_division = 0))
+
+cm_stack = confusion_matrix(y_test, y_pred_stack)
+sns.heatmap(cm_stack, annot = True, fmt = "d")
+plt.title("Confusion Matrix - Stacked Model")
+plt.xlabel("Predicted"); plt.ylabel("Actual")
+plt.show()
