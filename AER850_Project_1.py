@@ -201,6 +201,71 @@ rand_forest.fit(X_train, y_train)
 print("Best Random Forest Params (RandomizedSearchCV):", rand_forest.best_params_)
 print("Best Random Forest CV Accuracy:", round(rand_forest.best_score_, 3))
 
+print("\n---- Threshold Analysis (One-vs-Rest) ----")
+
+import numpy as np
+from sklearn.metrics import precision_score, recall_score, f1_score
+import matplotlib.pyplot as plt
+
+# Positive class
+POS_CLASS = 1
+
+# Binarize
+y_test_bin = (y_test == POS_CLASS).astype(int)
+
+# Collect tuned models
+best_logreg = grid_logreg.best_estimator_
+best_tree   = grid_tree.best_estimator_
+best_forest = grid_forest.best_estimator_
+
+models_for_threshold = [
+    ("Logistic Regression (Best)", best_logreg),
+    ("Decision Tree (Best)", best_tree),
+    ("Random Forest (Best)", best_forest),
+]
+
+thresholds = np.arange(0.0, 1.0, 0.1)
+
+best_thresholds_summary = {}
+
+# Perform threshold analysis for each tuned model
+for name, model in models_for_threshold:
+    class_index = list(model.classes_).index(POS_CLASS)
+    y_scores = model.predict_proba(X_test)[:, class_index]
+
+    precisions, recalls, f1s = [], [], []
+    print(f"\n{name}: Precision/Recall/F1 across thresholds (positive class = {POS_CLASS})")
+    for t in thresholds:
+        y_pred_thr = (y_scores >= t).astype(int)
+        p = precision_score(y_test_bin, y_pred_thr, zero_division=0)
+        r = recall_score(y_test_bin, y_pred_thr, zero_division=0)
+        f = f1_score(y_test_bin, y_pred_thr, zero_division=0)
+        precisions.append(p); recalls.append(r); f1s.append(f)
+        print(f"Threshold: {t:.1f}  Precision: {p:.3f}  Recall: {r:.3f}  F1: {f:.3f}")
+
+    best_idx = int(np.argmax(f1s))
+    best_thresholds_summary[name] = {
+        "best_threshold": float(thresholds[best_idx]),
+        "best_precision": float(precisions[best_idx]),
+        "best_recall": float(recalls[best_idx]),
+        "best_f1": float(f1s[best_idx])
+    }
+
+    # Combined plots
+    plt.figure(figsize=(6,4))
+    plt.plot(thresholds, precisions, marker="o", label="Precision")
+    plt.plot(thresholds, recalls, marker="o", label="Recall")
+    plt.plot(thresholds, f1s, marker="o", label="F1")
+    plt.xlabel("Threshold"); plt.ylabel("Score")
+    plt.title("Precision / Recall / F1 vs Threshold")
+    plt.legend(); plt.grid(True); plt.show()
+
+# Summary
+print("\nBest thresholds by model (max F1, one-vs-rest on Step =", POS_CLASS, "):")
+for k, v in best_thresholds_summary.items():
+    print(f"{k}: t* = {v['best_threshold']:.1f}  (P = {v['best_precision']:.3f}, "
+          f"R = {v['best_recall']:.3f}, F1 = {v['best_f1']:.3f})")
+
 # ================================
 # Step 5: Model Performance Analysis
 # ================================
