@@ -340,3 +340,39 @@ sns.heatmap(cm_stack, annot = True, fmt = "d")
 plt.title("Confusion Matrix - Stacked Model")
 plt.xlabel("Predicted"); plt.ylabel("Actual")
 plt.show()
+
+# ================================
+# Step 7: Model Evaluation
+# ================================
+
+import joblib
+import pandas as pd
+
+print("\n================ Step 7: Model Evaluation ================\n")
+
+# Save the tuned best model
+best_forest = grid_forest.best_estimator_
+joblib.dump(best_forest, "best_model.pkl")
+print("\nModel saved as best_model.pkl")
+
+# Load and use it
+loaded_model = joblib.load("best_model.pkl")
+
+# Define the test points as full (X, Y, Z) coordinates
+test_points = pd.DataFrame([
+    [9.375, 3.0625, 1.51],
+    [6.995, 5.125, 0.3875],
+    [0.3, 3.0625, 1.93],
+    [9.4, 3.0, 1.8],
+    [9.4, 3.0, 1.3]
+], columns = ["X", "Y", "Z"])
+
+# Make predictions
+predictions = loaded_model.predict(test_points)
+
+# Print results
+print("\nPredicted Steps for Test Points:")
+for point, pred in zip(test_points.values, predictions):
+    formatted_point = " ".join([f"{x:.4f}" for x in point])
+    print(f"Input [{formatted_point}] = Predicted Step: {pred}")
+    
