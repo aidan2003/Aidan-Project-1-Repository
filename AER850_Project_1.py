@@ -21,7 +21,7 @@ df["Step"] = df["Step"].astype(int)
 
 print("\n\n================ Step 2: Data Visualization ================\n\n")
 
-# Part A: Count how many times each Step appears
+# How many times each Step appears
 step_counts = df["Step"].value_counts().sort_index()
 
 plt.bar(step_counts.index.astype(str), step_counts.values)
@@ -30,7 +30,7 @@ plt.xlabel("Step")
 plt.ylabel("Frequency")
 plt.show()
 
-# Part B: Average X, Y, Z values per Step
+# Average X, Y, Z values per Step
 step_means = df.groupby("Step")[["X", "Y", "Z"]].mean()
 
 plt.figure(figsize=(10, 3))
@@ -252,12 +252,12 @@ for name, model in models_for_threshold:
     }
 
     # Combined plots
-    plt.figure(figsize=(6,4))
-    plt.plot(thresholds, precisions, marker="o", label="Precision")
-    plt.plot(thresholds, recalls, marker="o", label="Recall")
-    plt.plot(thresholds, f1s, marker="o", label="F1")
+    plt.figure(figsize = (6,4))
+    plt.plot(thresholds, precisions, marker = "o", label = "Precision")
+    plt.plot(thresholds, recalls, marker = "o", label = "Recall")
+    plt.plot(thresholds, f1s, marker = "o", label = "F1")
     plt.xlabel("Threshold"); plt.ylabel("Score")
-    plt.title("Precision / Recall / F1 vs Threshold")
+    plt.title(f"{name}: Precision / Recall / F1 vs Threshold")
     plt.legend(); plt.grid(True); plt.show()
 
 # Summary
@@ -276,7 +276,7 @@ import matplotlib.pyplot as plt
 
 print("\n\n================ Step 5: Model Performance Analysis ================\n")
 
-# Logistic Regression (use best estimator from GridSearchCV)
+# Logistic Regression Performance Analysis
 print("\n================ Logistic Regression Results ================\n")
 best_logreg = grid_logreg.best_estimator_
 y_pred_test1 = best_logreg.predict(X_test)
@@ -287,7 +287,7 @@ plt.title("Confusion Matrix - Logistic Regression (Best Params)")
 plt.xlabel("Predicted"); plt.ylabel("Actual")
 plt.show()
 
-# Decision Tree (use best estimator from GridSearchCV)
+# Decision Tree Performance Analysis
 print("\n================ Decision Tree Results ================\n")
 best_tree = grid_tree.best_estimator_
 y_pred_test2 = best_tree.predict(X_test)
@@ -298,7 +298,7 @@ plt.title("Confusion Matrix - Decision Tree (Best Params)")
 plt.xlabel("Predicted"); plt.ylabel("Actual")
 plt.show()
 
-# Random Forest (use best estimator from GridSearchCV)
+# Random Forest Performance Analysis
 print("\n================ Random Forest Results ================\n")
 best_forest = grid_forest.best_estimator_
 y_pred_test3 = best_forest.predict(X_test)
