@@ -56,6 +56,35 @@ plt.show()
 step_stats = df.groupby("Step")[["X", "Y", "Z"]].agg(["mean", "std", "min", "max"])
 print(step_stats.round(2))
 
+# 3D data analysis
+plt.figure(figsize = (10, 7))
+ax3d = plt.axes(projection = "3d")
+
+# Create scatter plot
+plot3d = ax3d.scatter3D(
+    df["X"], df["Y"], df["Z"],
+    c = df["Step"], cmap = "tab20", s = 40
+)
+
+# Label axes and title
+ax3d.set_xlabel("X-Axis")
+ax3d.set_ylabel("Y-Axis")
+ax3d.set_zlabel("Z-Axis")
+ax3d.set_title("3D Distribution of the XYZ Points Grouped by Step")
+
+# Legend
+legend_elements, legend_labels = plot3d.legend_elements()
+ax3d.legend(
+    legend_elements,
+    legend_labels,
+    title = "Step",
+    bbox_to_anchor = (1.1, 1),
+    loc = "upper left"
+)
+
+plt.tight_layout()
+plt.show()
+
 # ================================
 # Step 3: Correlation Analysis
 # ================================
